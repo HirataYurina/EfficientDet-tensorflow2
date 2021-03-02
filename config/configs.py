@@ -27,12 +27,12 @@ config.TRAIN.NEGATIVE_THRES = 0.4
 # freeze layers of resnet
 # TODO: i will change my architecture to some pretrained models on github and freeze the final 3 layers.
 config.TRAIN.FREEZE = 174
-config.TRAIN.INPUT_SHAPE = (416, 416)
+config.TRAIN.MODEL_ID = 1
 config.TRAIN.SAVE_INTERVAL = 5
 
-config.TRAIN.TRAIN_TXT = './datas/2077_trainval.txt'
-config.TRAIN.TEST_TXT = './datas/2077_test.txt'
-config.TRAIN.CLASS_TXT = './datas/danger_source_classes.txt'
+config.TRAIN.TRAIN_TXT = './2077_trainval.txt'
+config.TRAIN.TEST_TXT = './2077_test.txt'
+config.TRAIN.CLASS_TXT = './development/danger_source_classes.txt'
 config.TRAIN.SAVE_PATH = './logs/first/'
 config.TRAIN.DIARY_PATH = './diary/training.log'
 

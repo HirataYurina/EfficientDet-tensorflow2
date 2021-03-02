@@ -12,6 +12,7 @@ from net.backbone.efficient_net import efficient_net_b0, efficient_net_b1, effic
 from net.backbone.efficient_net import efficient_net_b4, efficient_net_b5, efficient_net_b6, efficient_net_b7
 from net.backbone.efficient_net import CONV_KERNEL_INITIALIZER
 from core.bias_initializer import BiasInitializer
+import tensorflow.keras.layers as layers
 
 # BN global parameters
 MOMENTUM = 0.997
@@ -32,8 +33,8 @@ class Swish(keras.layers.Layer):
         super(Swish, self).__init__()
 
     def call(self, inputs, **kwargs):
-        result = tf.nn.swish(inputs)
-        return result
+        results = layers.multiply([inputs, tf.keras.activations.sigmoid(inputs)])
+        return results
 
 
 class WeightAdd(keras.layers.Layer):
@@ -242,7 +243,7 @@ class ClassPrediction(keras.Model):
 
         for i in range(self.depth):
             x = self.separable_conv[i](x)
-            x = self.bn[i][self.level](x)
+            x = self.bn[i][self.level % 5](x)
             x = self.swish(x)
         x = self.head(x)
         x = self.sigmoid(x)
@@ -284,7 +285,7 @@ class BoxPrediction(keras.Model):
 
         for i in range(self.depth):
             x = self.conv[i](x)
-            x = self.bn[i][self.level](x)
+            x = self.bn[i][self.level % 5](x)
             x = self.swish(x)
         x = self.head(x)
         x = self.reshape(x)
@@ -347,9 +348,9 @@ def efficient_det(backbone,
     class_prob = keras.layers.Concatenate(axis=1)(class_prob)
     box_offset = keras.layers.Concatenate(axis=1)(box_offset)
 
-    eff_det_model = keras.Model(img_inputs, [class_prob, box_offset])
+    eff_det_model = keras.Model(img_inputs, [box_offset, class_prob])
 
-    return eff_det_model
+    return eff_det_model, img_inputs
 
 
 if __name__ == '__main__':
@@ -365,3 +366,6 @@ if __name__ == '__main__':
     # yolo3: we simply use [independent] logistic classifier for every class
     efficient_det1 = efficient_det(1, 9, 20)
     efficient_det1.summary()
+
+    dummy = tf.random.normal(shape=(1, 640, 640, 3))
+    efficient_det1(dummy)

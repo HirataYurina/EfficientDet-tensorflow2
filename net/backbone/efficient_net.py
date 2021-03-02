@@ -63,7 +63,7 @@ class Swish(keras.layers.Layer):
         super(Swish, self).__init__()
 
     def call(self, inputs, **kwargs):
-        results = tf.nn.swish(inputs)
+        results = layers.multiply([inputs, tf.keras.activations.sigmoid(inputs)])
         return results
 
 

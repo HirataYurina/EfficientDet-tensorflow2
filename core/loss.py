@@ -77,7 +77,7 @@ def focal_loss(y_true, y_pred, label_weights, gamma=config.TRAIN.SIGMA, alpha=co
     return x
 
 
-def retina_loss(args):
+def efficient_loss(args):
     """Retina Loss
 
     Args:
